@@ -1,0 +1,440 @@
+#include <stdio.h>
+#include <conio.h>
+#include <stdlib.h>  // PROBLEMA CON EL CARGAR LIBRO O LEER LIBROO
+#include <string.h>               // PROBLEMA AL GUARDAR CADA REGISTRO Y LEERLO.
+#include <sys\stat.h>
+#include "lista.h"
+//#include "listas.h"
+#include "TDATOL.H"
+//#include "TDATOLS.H"
+
+struct reg_libro{
+	int nro_libro;
+	char autor[42];
+	char titulo[80];
+};
+
+void Cargar(tlista *l_lib);
+void cargar_libros(tlista *l);
+void ModificarLibros();
+void listar_libros(int *error);
+void showpos(FILE *stream);
+char Enter();
+char Salir();
+void clrbuf();
+void Grabar(tlista *l_lib);
+void mostrarlista(tlista *l);
+
+int main()
+{
+FILE *index_principal;
+FILE *libros;
+tlista l_lib;
+int opc,error;
+
+lcrear(&l_lib);
+error=0;
+clrscr();
+while(opc != 99){
+	printf("\n\t\t¿Que desea Hacer?\n\n");
+	printf("\t\t1.Alta de libros\n");
+	printf("\t\t2.Baja de libros\n");
+	printf("\t\t3.Modif de libros\n");
+	printf("\t\t4.Listar libros por numero ascendente\n");
+	printf("\t\t5.Listar autores por nombre\n");
+	printf("\t\t6.Listar por titulo\n");
+	printf("\t\t7.Buscar libros de un autor\n");
+	printf("\t\t8.Buscar libros de un titulo\n");
+	printf("\t\t9.\n");
+	printf("\t\t10.\n");
+	printf("\n\t\t99.Salir\n");
+	printf("\n\t\OPCIÓN: ");
+	scanf("%d", &opc);
+	fflush(stdin);
+	clrbuf();
+	printf("\n\n");
+	switch(opc){
+		case 1:         //Carga de libros
+			cargar_libros(&l_lib);
+		break;
+
+		/*case 2:
+			if(lvacia(&l)){
+				printf("La lista se encuentra vacía.\n\n");
+			}else{
+				printf("La lista ya tiene elementos ingresados.\n\n");
+			}break;
+	  */
+
+		case 3:
+			ModificarLibro();
+			break;
+
+		case 4:        // Listar los libros en forma ascendente
+			listar_libros(&error);
+			break;
+		/*
+		case 5:        // mostrar los valores en forma descendente
+			if(!lvacia(&l))
+				{
+				lppio(&l);
+				lant(&l);
+				linfo(&l,&num);
+				printf("%d ",num.clave);
+				while(!lfin(&l))
+					{
+					lant(&l);
+					linfo(&l,&num);
+					printf("%d ",num.clave);
+					}
+				}
+			break;
+
+		case 6:        // mostrar el primer elemento de la lista
+			if(!lvacia(&l))
+				{
+				lppio(&l);
+				linfo(&l,&num);
+				printf("%d ",num.clave);
+				}
+			else
+				printf("La lista se encuentra vacía.\n\n");
+			break;
+
+		case 7:        // mostrar el último elemento de la lista
+			if(!lvacia(&l))
+				{
+				lppio(&l);
+				lant(&l);
+				linfo(&l,&num);
+				printf("%d ",num.clave);
+				}
+			else
+				printf("La lista se encuentra vacía.\n\n");
+			break;
+
+		case 8:        // mostrar el siguiente elemento en la lista
+			if(!lvacia(&l))
+				{
+				lsig(&l);
+				linfo(&l,&num);
+				printf("%d ",num.clave);
+				}
+			else
+				printf("La lista se encuentra vacía.\n\n");
+			break;
+
+		case 9:        // modificar el elemento en la lista
+			if(!lvacia(&l))
+				{
+				linfo(&l,&num);
+				printf("\n\t\tModificar %d por el valor: ", num.clave);
+				scanf("%d",&num.clave);
+				lmodificar(&l,num);
+				linfo(&l,&num);
+				printf("%d ",num.clave);
+				}
+			else
+				printf("La lista se encuentra vacía.\n\n");
+			break;
+
+		case 10:
+			clrscr();
+			printf("Ingrese el valor que desea buscar en la lista: ");
+			scanf("%d", &num.clave);
+		 //	printf("El valor %d se encuentra %d veces en la lista\n\n", busca,buscar(busca,cabeza, cabeza));
+			lbuscar(&l,num.clave,&existe);
+			if(existe == 1)
+				printf("\nEl valor %d buscado se encuentra en la lista\n", num.clave);
+			else
+				printf("\nEl valor %d buscado no se encuentra en la lista\n", num.clave);
+			break;
+		*/
+		case 99:
+			exit(1);
+
+		default:
+			printf("Error, el comando no es válido\n");
+			break;
+		}
+		clrscr();
+	}
+
+}
+
+
+// Cargar indice ppal en memoria
+
+void Cargar(tlista *l_lib)
+{
+FILE *index;
+index_lib dato;
+int error;
+
+if((index = fopen("LIBROS_INDEX.TXT", "r")) == NULL)
+{
+	fprintf(stderr, "Cannot open output file.\n");
+	error=1;
+}else{
+	//fseek(libros, SEEK_SET, 0);
+	fread(&dato, sizeof(dato), 1, index);
+	if(!feof(index)){
+		while(!feof(index)){
+			if(!lllena(l_lib)){
+				/*dato.clave=reg.nro_lib;
+				strcpy(dato.autor,reg.autor);
+				strcpy(dato.titulo,reg.titulo);
+				linsertarorden(l_lib,dato,'a');
+				*/printf("%d  %d  %d\n",dato.clave,dato.sig,dato.ant);
+				fread(&dato, sizeof(dato), 1, index);
+			}
+		}
+	}else{
+		printf("La base de datos esta vacia, procure ingresar datos antes de operar\n\n");
+	}
+	fclose(index);
+}
+}
+
+
+// Rutina para cargar libros
+void cargar_libros(tlista *l)
+{
+char control;
+FILE *libros;
+struct reg_libro a;
+struct reg_libro reg;
+index_lib dato;
+struct stat statbuf;
+
+if ((libros = fopen("LIBROS.TXT", "a+")) == NULL) /* open file TEST.$$$ */
+{
+		fprintf(stderr, "Cannot open output file.\n");
+		//return 1;
+}else{
+	//Busco el ultimo numero para poder asignar el nro de libro siguiente.
+	fstat(fileno(libros), &statbuf);
+	a.nro_libro = statbuf.st_size  /  sizeof(a);
+	//comienzo a cargar los libros y archivarlos
+	fclose(libros);
+	control='s';
+	while(control=='s' || control=='S'){
+		if ((libros = fopen("LIBROS.TXT", "a+")) == NULL){
+			fprintf(stderr, "Cannot open output file.\n");
+			//return 1;
+		}
+		a.nro_libro=a.nro_libro+1;
+		printf("Autor = ");
+		gets(a.autor);
+		fflush(stdin);
+		printf("Titulo = ");
+		gets(a.titulo);
+		fflush(stdin);
+		fwrite(&a, sizeof(a), 1, libros);
+		fclose(libros);
+		// insertar libro agregado en la lista ordenada
+ /*	if(!lllena(l)){
+			dato.clave=a.nro_libro;
+			dato.sig=0;
+			dato.ant=0;
+			linsertarorden(l,dato,'a');
+		// grabar lista ordenada en archivo
+		Grabar(l);
+	}*/
+
+	control=Salir();
+
+	}
+
+}
+}
+
+//Modificar Libros
+void ModificarLibro()
+{
+	if ((libros = fopen("LIBROS.TXT", "a+")) == NULL){
+		fprintf(stderr, "Cannot open output file.\n");
+			//return 1;
+	}
+
+	fpos_t filepos;
+
+	/* save the file pointer position */
+	fgetpos(stream, &filepos);
+
+	/* write some data to the file */
+	fwrite(&texto,sizeof(texto),1,stream);
+
+	/* show the current file position */
+	showpos(stream);
+
+	/* set a new file position, display it */
+	filepos=0;
+	if (fsetpos(stream, &filepos) == 0){
+		showpos(stream);
+		fwrite("This is a zest",sizeof("This is a zest"),1,stream);
+	}else{
+		fprintf(stderr, "Error setting file pointer.\n");
+		exit(1);
+	}
+}
+
+
+
+//LISTA LIBROS
+void listar_libros(int *error)
+{
+FILE *libros;
+struct reg_libro reg;
+*error=0;
+fpos_t filepos;
+
+if ((libros = fopen("LIBROS.TXT", "r")) == NULL) /* open file TEST.$$$ */
+{
+	fprintf(stderr, "No se encuentra el archivo\n");
+	Enter();
+	*error=1;
+}else{
+	fseek(libros,0, SEEK_SET);
+	fgetpos(libros, &filepos);
+			if(fsetpos(libros, &filepos) == 0){
+				showpos(libros);
+			}else{
+				fprintf(stderr, "Error setting file pointer.\n");
+				exit(1);
+			}
+			Enter();
+	fread(&reg, sizeof(reg), 1, libros);
+	if(!feof(libros)){
+		printf("Nro lib     titulo              autor\n\n");
+		while(!feof(libros)){
+			fgetpos(libros, &filepos);
+			if(fsetpos(libros, &filepos) == 0){
+				showpos(libros);
+			}else{
+				fprintf(stderr, "Error setting file pointer.\n");
+				exit(1);
+			}
+			Enter();
+			printf("%d     %s                %s    %d\n",reg.nro_libro,reg.titulo,reg.autor,sizeof(reg));
+			fread(&reg, sizeof(reg), 1, libros);
+		}
+	}else{
+		printf("La base de datos esta vacia, procure ingresar datos antes de operar\n\n");
+	}
+	Enter();
+	clrscr();
+	fclose(libros);
+}
+}
+
+void showpos(FILE *stream)
+
+{
+	fpos_t pos;
+
+	/* display the current file pointer
+		position of a stream */
+	fgetpos(stream, &pos);
+	printf("File position: %ld\n", pos);
+}
+
+
+//Pre{...}//
+char Enter()
+{
+char E;
+fflush(stdin);
+clrbuf();
+do
+  {
+	printf("\nPresione Enter Para Continuar\n");
+	scanf("%c",&E);
+  }
+  while(E!='\n');
+return(E);
+}
+//Pos{Valida el keypress del enter}//
+/*--------------------------------------*/
+
+char Salir()
+{
+char X;
+printf("\nQuiere seguir ingresando libros?: \n S = Si       N = No \n");
+do
+  {
+	scanf("%c",&X);
+	fflush(stdin);
+	clrbuf();
+  }
+while (X!='S' && X!='s' && X!='N' && X!='n');
+clrscr();
+return(X);
+}
+
+//Pre{...}//
+void clrbuf()
+{
+char a;
+while (kbhit() != 0){
+			a=getch();
+		}
+}
+//Pos{Borra el buffer del getch}//
+
+
+
+void mostrarlista(tlista *l)
+{
+index_lib dato;
+if(!lvacia(l)){
+	lppio(l);
+	linfo(l,&dato);
+	printf("%d  %d  %d\n",dato.clave,dato.sig,dato.ant);
+	lsig(l);
+	while(!lfin(l)){
+		linfo(l,&dato);
+		printf("%d  %d  %d\n",dato.clave,dato.sig,dato.ant);
+		lsig(l);
+	}
+}
+}
+
+
+void Grabar(tlista *l_lib)
+{
+FILE *index;
+index_lib dato;
+
+if ((index = fopen("LIBROS_INDEX.TXT", "w")) == NULL)
+{
+	fprintf(stderr, "Cannot open output file.\n");
+	//return 1;
+}
+fseek(index, SEEK_SET, 0);
+if(!lvacia(l_lib)){
+	lppio(l_lib);
+	linfo(l_lib,&dato);
+	printf("%d  %d  %d\n",dato.clave,dato.sig,dato.ant);
+	fwrite(&dato, sizeof(dato), 1, index);
+	lsig(l_lib);
+	while(!lfin(l_lib)){
+		linfo(l_lib,&dato);
+		fwrite(&dato, sizeof(dato), 1, index);
+		printf("%d  %d  %d\n",dato.clave,dato.sig,dato.ant);
+		lsig(l_lib);
+	}
+}else{
+	printf("OBSERVACION: EL INDICE NO HA SIDO CREADO");
+}
+
+fclose(index);
+}
+
+//----------------------------------------//
+
+
+
+
+
+

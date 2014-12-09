@@ -1,0 +1,34 @@
+# Project: Converters
+# Compiler: Default GCC compiler
+# Compiler Type: MingW 3
+# Makefile created by wxDev-C++ 7.3 on 12/04/10 16:56
+
+WXLIBNAME = wxmsw28
+CPP       = g++.exe
+CC        = gcc.exe
+WINDRES   = "windres.exe"
+OBJ       = Objects/MingW/sql_conv.o
+LINKOBJ   = "Objects/MingW/sql_conv.o"
+LIBS      = -L"C:/Program Files/Dev-Cpp/Lib"  -g3 
+INCS      = -I"C:/Program Files/Dev-Cpp/Include"
+CXXINCS   = -I"C:/Program Files/Dev-Cpp/lib/gcc/mingw32/3.4.5/include" -I"C:/Program Files/Dev-Cpp/include/c++/3.4.5/backward" -I"C:/Program Files/Dev-Cpp/include/c++/3.4.5/mingw32" -I"C:/Program Files/Dev-Cpp/include/c++/3.4.5" -I"C:/Program Files/Dev-Cpp/include" -I"C:/Program Files/Dev-Cpp/" -I"C:/Program Files/Dev-Cpp/include/3rdparty/wx/plotctrl" -I"C:/Program Files/Dev-Cpp/include/3rdparty/wx/sheet" -I"C:/Program Files/Dev-Cpp/include/3rdparty/wx/treemultictrl" -I"C:/Program Files/Dev-Cpp/include/3rdparty/wx/things" -I"C:/Program Files/Dev-Cpp/include/3rdparty/wx" -I"C:/Program Files/Dev-Cpp/include/3rdparty" -I"C:/Program Files/Dev-Cpp/include/common/wx/msw" -I"C:/Program Files/Dev-Cpp/include/common/wx/generic" -I"C:/Program Files/Dev-Cpp/include/common/wx/fl" -I"C:/Program Files/Dev-Cpp/include/common/wx/gizmos" -I"C:/Program Files/Dev-Cpp/include/common/wx/html" -I"C:/Program Files/Dev-Cpp/include/common/wx/mmedia" -I"C:/Program Files/Dev-Cpp/include/common/wx/net" -I"C:/Program Files/Dev-Cpp/include/common/wx/ogl" -I"C:/Program Files/Dev-Cpp/include/common/wx/plot" -I"C:/Program Files/Dev-Cpp/include/common/wx/protocol" -I"C:/Program Files/Dev-Cpp/include/common/wx/stc" -I"C:/Program Files/Dev-Cpp/include/common/wx/svg" -I"C:/Program Files/Dev-Cpp/include/common/wx/xml" -I"C:/Program Files/Dev-Cpp/include/common/wx/xrc" -I"C:/Program Files/Dev-Cpp/include/common/wx" -I"C:/Program Files/Dev-Cpp/include/common"
+RCINCS    = --include-dir "C:/PROGRA~1/Dev-Cpp/include/common"
+BIN       = Output/MingW/Converters.exe
+DEFINES   = 
+CXXFLAGS  = $(CXXINCS) $(DEFINES)   -g3
+CFLAGS    = $(INCS) $(DEFINES)   -g3
+GPROF     = gprof.exe
+RM        = rm -f
+LINK      = g++.exe
+
+.PHONY: all all-before all-after clean clean-custom
+all: all-before $(BIN) all-after
+
+clean: clean-custom
+	$(RM) $(LINKOBJ) "$(BIN)"
+
+$(BIN): $(OBJ)
+	$(LINK) $(LINKOBJ) -o "$(BIN)" $(LIBS) 
+
+Objects/MingW/sql_conv.o: $(GLOBALDEPS) sql_conv.cpp listas.h TDATOLS.h
+	$(CPP) -c sql_conv.cpp -o Objects/MingW/sql_conv.o $(CXXFLAGS)

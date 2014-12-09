@@ -1,0 +1,18 @@
+#ifndef __TDATOL_H
+#define __TDATOL_H
+
+#define	MAX 100
+
+typedef int Tclave;
+
+typedef struct index_lib
+{
+	Tclave clave;
+	int autor;
+	int titulo;
+};
+
+typedef index_lib Tdato;
+#endif
+
+
